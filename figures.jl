@@ -5,6 +5,21 @@ figures.jl — Publication figures for "Dynamic Contracts and Corruption"
 using Plots, DataFrames, CSV
 gr()
 
+function save_fallback_figure(path::String, title_text::String, subtitle_text::String)
+    p = plot(
+        framestyle = :none,
+        legend = false,
+        grid = false,
+        axis = nothing,
+        size = (700, 450),
+    )
+    annotate!(p, 0.5, 0.62, text(title_text, 18, :center, :black))
+    annotate!(p, 0.5, 0.47, text(subtitle_text, 11, :center, :gray35))
+    xlims!(p, 0, 1)
+    ylims!(p, 0, 1)
+    savefig(p, path)
+end
+
 function fig_labor_decomposition(wedges)
     D = wedges.D
     share = wedges.corruption_share
@@ -21,10 +36,21 @@ end
 
 function fig_comparative_kappa()
     df = CSV.read("output/comparative_kappa.csv", DataFrame)
-    p1 = plot(df.kappa, df.K_star, marker=:o, lw=2, color="#2E86AB",
+    valid = filter(row -> isfinite(row.kappa) && isfinite(row.K_star) && isfinite(row.RT), df)
+    if nrow(valid) == 0
+        save_fallback_figure(
+            "figures/fig2_comparative_kappa.pdf",
+            "Comparative Statics Unavailable",
+            "No converged finite observations were available in output/comparative_kappa.csv. Run the full pipeline or increase solver budgets."
+        )
+        println("Saved fig2_comparative_kappa.pdf (fallback)")
+        return
+    end
+
+    p1 = plot(valid.kappa, valid.K_star, marker=:o, lw=2, color="#2E86AB",
               xlabel="Enforcement Capacity κ", ylabel="Steady-State K*",
               title="Higher κ → More Public Investment (RT weakens)", legend=false)
-    p2 = plot(df.kappa, df.RT, marker=:s, lw=2, color="#E94F37",
+    p2 = plot(valid.kappa, valid.RT, marker=:s, lw=2, color="#E94F37",
               xlabel="Enforcement Capacity κ", ylabel="Revolution Tax (RT)",
               title="Revolution Tax Declines with State Capacity", legend=false)
     p = plot(p1, p2, layout=(1,2), size=(900,420))
@@ -52,7 +78,17 @@ end
 
 function fig_distortion_vs_rho()
     df = CSV.read("output/table1_raw.csv", DataFrame)
-    df = dropmissing(df, :D_low)
+    df = filter(row -> isfinite(row.rho) && isfinite(row.D_low), df)
+
+    if nrow(df) == 0
+        save_fallback_figure(
+            "figures/fig4_distortion_vs_rho.pdf",
+            "Distortion Scatter Unavailable",
+            "No converged finite rows were available in output/table1_raw.csv. This is expected in smoke-test runs."
+        )
+        println("Saved fig4_distortion_vs_rho.pdf (fallback)")
+        return
+    end
 
     p = scatter(df.rho, df.D_low, alpha=0.35, color="#2E86AB", markersize=3,
                 xlabel="Corruption Wedge ρ = 1 + ϕ", ylabel="Labor Distortion (Low Type) D₁",

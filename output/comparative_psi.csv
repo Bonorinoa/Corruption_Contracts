@@ -1,0 +1,6 @@
+sigma,gamma,alpha,beta,delta,tau,kappa,psi,V_star,K_star,rho,phi,RT,ET,D_low,corruption_share_low,marginal_return,converged,iterations,final_diff
+2.0,1.5,0.33,0.96,0.1,0.2,1.0,0.5,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,false,8,0.3946937577678435
+2.0,1.5,0.33,0.96,0.1,0.2,1.0,0.875,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,false,8,0.9090581136982223
+2.0,1.5,0.33,0.96,0.1,0.2,1.0,1.25,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,false,8,0.6210411390083515
+2.0,1.5,0.33,0.96,0.1,0.2,1.0,1.625,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,false,8,0.4629648269892516
+2.0,1.5,0.33,0.96,0.1,0.2,1.0,2.0,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,false,8,0.4867831608085951
